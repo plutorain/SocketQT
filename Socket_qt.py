@@ -19,6 +19,7 @@ class MyWindow(QMainWindow, form_class):
         self.setupUi(self)
         self.pushButton_Connect.clicked.connect(self.Connect_btn_clicked)
         self.pushButton_Send.clicked.connect(self.Send_btn_clicked)
+        self.pushButton_Disconnect.clicked.connect(self.Disconnect_btn_clicked)
         self.radioButton_Client.clicked.connect(self.Radio_btn_clicked)
         self.radioButton_Server.clicked.connect(self.Radio_btn_clicked)
 
@@ -92,7 +93,7 @@ class MyWindow(QMainWindow, form_class):
                 #self.send_th = threading.Thread(target = self.sendingMsg, args=(self.conn,))
                 self.recv_th = threading.Thread(target = self.gettingMsg, args=(self.conn,))
                 #self.send_th.daemon = True
-                self.recv_th.daemon = False
+                #self.recv_th.daemon = False
                 #self.send_th.start()
                 self.recv_th.start()
                 print("Server : Thread is running")
@@ -104,7 +105,7 @@ class MyWindow(QMainWindow, form_class):
                 #self.send_th = threading.Thread(target = self.sendingMsg, args=(self.sock,))
                 self.recv_th = threading.Thread(target = self.gettingMsg, args=(self.sock,))
                 #self.send_th.daemon = True
-                self.recv_th.daemon = False
+                #self.recv_th.daemon = False
                 #self.send_th.start()
                 self.recv_th.start()       
                 print("Client : Thread is running")
@@ -157,16 +158,18 @@ class MyWindow(QMainWindow, form_class):
     def Disconnect_btn_clicked(self):
         print("Disconnect")
         self.Isconnected = False
-        self.pushButton_Connect.setEnabled(True)
-        self.pushButton_Disconnect.setEnabled(False)
         self.sock.close()
         if (self.Myrole == "SERVER"):
             self.conn.close()
+        self.pushButton_Connect.setEnabled(True)
+        self.pushButton_Disconnect.setEnabled(False)
+        
         #self.send_th.quit()
         #self.recv_th.quit()
 
     def Send_btn_clicked(self):
         text = self.lineEdit_Message.text()
+        text = text+'\r'
         self.textBrowser.append(text)
         text = text.encode("utf-8")
         if(self.Myrole == "SERVER"):
